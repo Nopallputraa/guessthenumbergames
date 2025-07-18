@@ -6,9 +6,7 @@
   <title>Tebak Angka</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    .shake {
-      animation: shake 0.3s ease-in-out;
-    }
+    .shake { animation: shake 0.3s ease-in-out; }
     @keyframes shake {
       0% { transform: translateX(0); }
       25% { transform: translateX(-5px); }
@@ -16,15 +14,24 @@
       75% { transform: translateX(-5px); }
       100% { transform: translateX(0); }
     }
+
+    /* Hilangkan tombol spinner pada input type number */
+    input[type=number]::-webkit-outer-spin-button,
+    input[type=number]::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+    input[type=number] {
+      -moz-appearance: textfield;
+    }
   </style>
 </head>
 <body class="min-h-screen flex flex-col justify-between font-sans" style="background-color: #762E7A;">
 
-  <!-- Container -->
   <div class="flex-grow flex items-center justify-center">
-    <div class="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md text-center">
+    <div class="bg-white p-8 rounded-2xl shadow-xl w-full max-w-2xl text-center">
 
-      <!-- Section: Input Nama -->
+      <!-- Input Nama -->
       <div id="nameSection">
         <h1 class="text-3xl font-bold text-gray-800 mb-4">👤 Hai, Masukkan Namamu</h1>
         <input id="nameInput" type="text" placeholder="Nama kamu..."
@@ -33,48 +40,82 @@
           class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-4 rounded-lg transition">
           Mulai Permainan
         </button>
-        <!-- Watermark -->
         <p class="text-xs text-gray-400 mt-4">@nopallnim</p>
       </div>
 
-      <!-- Section: Permainan -->
-      <div id="gameSection" class="hidden">
-        <h2 id="playerName" class="text-2xl font-semibold text-indigo-800 mb-2"></h2>
+      <!-- Menu Pilihan -->
+      <div id="menuSection" class="hidden">
+        <h2 class="text-xl font-bold mb-4">Pilih Permainan</h2>
+        <button id="playSingle" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-4 rounded-lg mb-2">
+          Tebak Angka 1–100
+        </button>
+        <button id="playFour" class="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded-lg">
+          Tebak 4 Angka Unik
+        </button>
+      </div>
+
+      <!-- Game Tebak Angka 1–100 -->
+      <div id="gameSectionSingle" class="hidden">
+        <h2 id="playerNameSingle" class="text-2xl font-semibold text-indigo-800 mb-2"></h2>
         <p class="text-gray-600 mb-4">
           Saya menyimpan angka rahasia antara <strong>1 sampai 100</strong>. Coba tebak ya!
         </p>
-
-        <input id="guessInput" type="number" placeholder="Masukkan angka..."
+        <input id="guessInputSingle" type="number" placeholder="Masukkan angka..."
           class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 mb-4 text-center text-lg">
-        <button id="guessBtn"
+        <button id="guessBtnSingle"
           class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-4 rounded-lg transition">
           Tebak
         </button>
-
-        <div id="feedback" class="mt-6 text-lg font-semibold text-gray-700"></div>
-        <div id="attempts" class="mt-2 text-sm text-gray-600"></div>
-        <button id="restartBtn"
+        <div id="feedbackSingle" class="mt-6 text-lg font-semibold text-gray-700"></div>
+        <div id="attemptsSingle" class="mt-2 text-sm text-gray-600"></div>
+        <button id="restartBtnSingle"
           class="mt-4 hidden bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded-lg">
           Main Lagi
         </button>
       </div>
 
-      <!-- Section: Leaderboard -->
-      <div id="leaderboardSection" class="mt-8 text-left hidden">
-        <h3 class="text-xl font-bold text-indigo-700 mb-2">🏆 Top 5 Leaderboard</h3>
-        <ul id="leaderboardList" class="text-gray-800 list-decimal list-inside text-sm space-y-1"></ul>
-      </div>
+      <!-- Game Tebak 4 Angka Unik -->
+      <div id="gameSectionFour" class="hidden text-left">
+        <h2 id="playerNameFour" class="text-xl font-semibold text-indigo-800 mb-2"></h2>
+        <p class="text-gray-600 mb-4">
+          Tebak 4 digit angka unik (0–9, tidak boleh kembar), misal: 1 7 3 5.<br/>
+          Setiap tebakan, kamu dapat petunjuk jumlah digit benar & posisi benar.
+        </p>
 
-      <!-- Section: Statistik -->
-      <div id="statsSection" class="mt-6 text-left hidden">
-        <h3 class="text-xl font-bold text-indigo-700 mb-2">📈 Statistik Kamu</h3>
-        <ul id="statsList" class="text-gray-700 text-sm list-disc list-inside space-y-1"></ul>
-      </div>
+        <div class="flex justify-center space-x-2 mb-4">
+          <input type="number" maxlength="1" class="digit-input w-12 h-12 text-center border border-gray-300 rounded-lg text-lg" />
+          <input type="number" maxlength="1" class="digit-input w-12 h-12 text-center border border-gray-300 rounded-lg text-lg" />
+          <input type="number" maxlength="1" class="digit-input w-12 h-12 text-center border border-gray-300 rounded-lg text-lg" />
+          <input type="number" maxlength="1" class="digit-input w-12 h-12 text-center border border-gray-300 rounded-lg text-lg" />
+        </div>
 
+        <button id="submitGuessFour" class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-4 rounded-lg">
+          Submit
+        </button>
+        <button id="restartFour" class="bg-gray-600 hover:bg-gray-700 text-white font-semibold py-2 px-4 rounded-lg ml-2">
+          Coba Lagi
+        </button>
+
+        <div id="feedbackFour" class="mt-4 text-lg font-semibold text-gray-700"></div>
+
+        <!-- Tabel Riwayat -->
+        <div class="overflow-x-auto mt-4">
+          <table class="min-w-full border border-gray-300 text-sm text-center">
+            <thead class="bg-gray-100">
+              <tr>
+                <th class="px-2 py-1 border">Tebakan Ke-</th>
+                <th class="px-2 py-1 border">Angka Tebakan</th>
+                <th class="px-2 py-1 border">Benar (Angka Benar, Posisi Salah)</th>
+                <th class="px-2 py-1 border">Posisi Benar (Angka & Posisi)</th>
+              </tr>
+            </thead>
+            <tbody id="historyTableFour"></tbody>
+          </table>
+        </div>
+      </div>
     </div>
   </div>
 
-  <!-- Tombol Logout di bawah sendiri -->
   <div class="p-4 flex justify-center">
     <button id="logoutBtn"
       class="px-8 py-1 bg-red-600 hover:bg-red-700 text-white text-xs rounded hidden">
@@ -82,170 +123,146 @@
     </button>
   </div>
 
-  <!-- Script -->
   <script>
-    let secretNumber = Math.floor(Math.random() * 100) + 1;
-    let attempts = 0;
     let playerName = "";
-
     const nameSection = document.getElementById("nameSection");
-    const gameSection = document.getElementById("gameSection");
-    const nameInput = document.getElementById("nameInput");
-    const startBtn = document.getElementById("startBtn");
+    const menuSection = document.getElementById("menuSection");
     const logoutBtn = document.getElementById("logoutBtn");
+    const startBtn = document.getElementById("startBtn");
+    const nameInput = document.getElementById("nameInput");
 
-    const guessInput = document.getElementById("guessInput");
-    const guessBtn = document.getElementById("guessBtn");
-    const feedback = document.getElementById("feedback");
-    const attemptsDisplay = document.getElementById("attempts");
-    const restartBtn = document.getElementById("restartBtn");
-    const playerNameHeading = document.getElementById("playerName");
-
-    const leaderboardSection = document.getElementById("leaderboardSection");
-    const leaderboardList = document.getElementById("leaderboardList");
-
-    const statsSection = document.getElementById("statsSection");
-    const statsList = document.getElementById("statsList");
-
-    // Mulai permainan
+    // Start
     startBtn.addEventListener("click", () => {
       const name = nameInput.value.trim();
-      if (name === "") {
-        alert("Masukkan nama terlebih dahulu!");
-        return;
-      }
-
+      if (!name) { alert("Masukkan nama terlebih dahulu!"); return; }
       playerName = name;
-      playerNameHeading.textContent = `Halo, ${playerName}! 🎮`;
       nameSection.classList.add("hidden");
-      gameSection.classList.remove("hidden");
-      leaderboardSection.classList.remove("hidden");
-      statsSection.classList.remove("hidden");
+      menuSection.classList.remove("hidden");
       logoutBtn.classList.remove("hidden");
-
-      loadLeaderboard();
-      loadStats();
-      guessInput.focus();
     });
 
-    // Logout user
-    logoutBtn.addEventListener("click", () => {
-      playerName = "";
-      nameInput.value = "";
-      gameSection.classList.add("hidden");
-      leaderboardSection.classList.add("hidden");
-      statsSection.classList.add("hidden");
-      nameSection.classList.remove("hidden");
-      logoutBtn.classList.add("hidden");
-
-      // Reset permainan
-      secretNumber = Math.floor(Math.random() * 100) + 1;
-      attempts = 0;
-      feedback.textContent = "";
-      attemptsDisplay.textContent = "";
-      guessInput.value = "";
-      guessInput.disabled = false;
-      guessBtn.disabled = false;
-      restartBtn.classList.add("hidden");
+    // Game Tebak Angka 1-100
+    let secretSingle = Math.floor(Math.random() * 100) + 1;
+    let attemptsSingle = 0;
+    document.getElementById("playSingle").addEventListener("click", () => {
+      menuSection.classList.add("hidden");
+      document.getElementById("gameSectionSingle").classList.remove("hidden");
+      document.getElementById("playerNameSingle").textContent = `Halo, ${playerName}! 🎮`;
     });
 
-    // Aksi ketika menebak
-    guessBtn.addEventListener("click", () => {
-      const guess = parseInt(guessInput.value);
-      feedback.classList.remove("shake");
-
+    document.getElementById("guessBtnSingle").addEventListener("click", () => {
+      const guess = parseInt(document.getElementById("guessInputSingle").value);
+      const feedback = document.getElementById("feedbackSingle");
+      const attemptsDisplay = document.getElementById("attemptsSingle");
       if (isNaN(guess) || guess < 1 || guess > 100) {
         feedback.textContent = "⚠️ Masukkan angka antara 1 dan 100!";
         feedback.classList.add("text-red-500", "shake");
         return;
       }
-
-      attempts++;
-      attemptsDisplay.textContent = `🧮 Percobaan ke-${attempts}`;
-
-      if (guess === secretNumber) {
-        feedback.innerHTML = `🎉 Selamat ${playerName}! Angkanya adalah <strong>${secretNumber}</strong>. Kamu menebak dalam <strong>${attempts}</strong> percobaan!`;
+      attemptsSingle++;
+      attemptsDisplay.textContent = `🧮 Percobaan ke-${attemptsSingle}`;
+      if (guess === secretSingle) {
+        feedback.innerHTML = `🎉 Selamat ${playerName}! Angkanya adalah <strong>${secretSingle}</strong>.`;
         feedback.classList.remove("text-red-500");
         feedback.classList.add("text-green-600");
-        guessBtn.disabled = true;
-        guessInput.disabled = true;
-        restartBtn.classList.remove("hidden");
-
-        saveToLeaderboard(playerName, attempts);
-        saveStats(playerName, attempts);
-        loadLeaderboard();
-        loadStats();
+        document.getElementById("guessBtnSingle").disabled = true;
+        document.getElementById("restartBtnSingle").classList.remove("hidden");
       } else {
-        feedback.textContent = guess < secretNumber ? "📉 Terlalu rendah!" : "📈 Terlalu tinggi!";
+        feedback.textContent = guess < secretSingle ? "📉 Terlalu rendah!" : "📈 Terlalu tinggi!";
         feedback.classList.add("text-red-500", "shake");
       }
     });
 
-    // Restart permainan
-    restartBtn.addEventListener("click", () => {
-      secretNumber = Math.floor(Math.random() * 100) + 1;
-      attempts = 0;
-      feedback.textContent = "";
-      attemptsDisplay.textContent = "";
-      guessInput.value = "";
-      guessInput.disabled = false;
-      guessBtn.disabled = false;
-      restartBtn.classList.add("hidden");
-      guessInput.focus();
+    document.getElementById("restartBtnSingle").addEventListener("click", () => {
+      secretSingle = Math.floor(Math.random() * 100) + 1;
+      attemptsSingle = 0;
+      document.getElementById("feedbackSingle").textContent = "";
+      document.getElementById("attemptsSingle").textContent = "";
+      document.getElementById("guessInputSingle").value = "";
+      document.getElementById("guessBtnSingle").disabled = false;
+      document.getElementById("restartBtnSingle").classList.add("hidden");
     });
 
-    // Simpan ke leaderboard
-    function saveToLeaderboard(name, score) {
-      let leaderboard = JSON.parse(localStorage.getItem("leaderboard")) || [];
-      const existing = leaderboard.find(entry => entry.name === name);
-      if (!existing || score < existing.score) {
-        leaderboard = leaderboard.filter(entry => entry.name !== name);
-        leaderboard.push({ name, score });
+    // Game Tebak 4 Angka Unik
+    function generateUniqueNumber() {
+      const digits = [];
+      while (digits.length < 4) {
+        const digit = Math.floor(Math.random() * 10);
+        if (!digits.includes(digit)) digits.push(digit);
       }
-      leaderboard.sort((a, b) => a.score - b.score);
-      leaderboard = leaderboard.slice(0, 5);
-      localStorage.setItem("leaderboard", JSON.stringify(leaderboard));
+      return digits;
     }
 
-    // Tampilkan leaderboard
-    function loadLeaderboard() {
-      const leaderboard = JSON.parse(localStorage.getItem("leaderboard")) || [];
-      leaderboardList.innerHTML = "";
-      leaderboard.forEach(entry => {
-        const li = document.createElement("li");
-        li.textContent = `${entry.name} - ${entry.score} percobaan`;
-        leaderboardList.appendChild(li);
+    let secretFour = generateUniqueNumber();
+    let attemptsFour = 0;
+    const historyTableFour = document.getElementById("historyTableFour");
+
+    document.getElementById("playFour").addEventListener("click", () => {
+      menuSection.classList.add("hidden");
+      document.getElementById("gameSectionFour").classList.remove("hidden");
+      document.getElementById("playerNameFour").textContent = `Halo, ${playerName}! 🎮`;
+    });
+
+    document.getElementById("submitGuessFour").addEventListener("click", () => {
+      const inputs = document.querySelectorAll("#gameSectionFour .digit-input");
+      const guess = Array.from(inputs).map(input => parseInt(input.value));
+      const feedback = document.getElementById("feedbackFour");
+      if (guess.some(isNaN)) {
+        feedback.textContent = "⚠️ Masukkan semua 4 digit angka!";
+        feedback.classList.add("text-red-500", "shake");
+        return;
+      }
+      if (new Set(guess).size !== 4) {
+        feedback.textContent = "⚠️ Semua digit harus unik!";
+        feedback.classList.add("text-red-500", "shake");
+        return;
+      }
+      attemptsFour++;
+      let correctDigits = 0, correctPositions = 0;
+      guess.forEach((num, i) => {
+        if (secretFour.includes(num)) correctDigits++;
+        if (secretFour[i] === num) correctPositions++;
       });
-    }
+      const wrongPosition = correctDigits - correctPositions;
 
-    // Simpan statistik pemain
-    function saveStats(name, score) {
-      let stats = JSON.parse(localStorage.getItem("stats")) || {};
-      if (!stats[name]) {
-        stats[name] = { games: 0, totalAttempts: 0 };
-      }
-      stats[name].games += 1;
-      stats[name].totalAttempts += score;
-      localStorage.setItem("stats", JSON.stringify(stats));
-    }
+      const row = document.createElement("tr");
+      row.innerHTML = `
+        <td class="border px-2 py-1">${attemptsFour}</td>
+        <td class="border px-2 py-1">${guess.join(" ")}</td>
+        <td class="border px-2 py-1">${wrongPosition}</td>
+        <td class="border px-2 py-1">${correctPositions}</td>
+      `;
+      historyTableFour.appendChild(row);
 
-    // Tampilkan statistik pemain
-    function loadStats() {
-      const stats = JSON.parse(localStorage.getItem("stats")) || {};
-      const userStats = stats[playerName];
-      statsList.innerHTML = "";
-
-      if (userStats) {
-        const avg = (userStats.totalAttempts / userStats.games).toFixed(2);
-        statsList.innerHTML = `
-          <li>Total Permainan: ${userStats.games}</li>
-          <li>Total Tebakan: ${userStats.totalAttempts}</li>
-          <li>Rata-rata Tebakan per Game: ${avg}</li>
-        `;
+      if (correctPositions === 4) {
+        feedback.textContent = `Selamat! Jawaban benar: ${secretFour.join(" ")} dalam ${attemptsFour} percobaan.`;
+        feedback.classList.remove("text-red-500");
+        feedback.classList.add("text-green-600");
       } else {
-        statsList.innerHTML = `<li>Belum ada data permainan.</li>`;
+        feedback.textContent = `${wrongPosition} angka benar (posisi salah), ${correctPositions} angka & posisi benar.`;
+        feedback.classList.add("text-blue-600");
       }
-    }
+    });
+
+    document.getElementById("restartFour").addEventListener("click", () => {
+      secretFour = generateUniqueNumber();
+      attemptsFour = 0;
+      historyTableFour.innerHTML = "";
+      const inputs = document.querySelectorAll("#gameSectionFour .digit-input");
+      inputs.forEach(input => input.value = "");
+      document.getElementById("feedbackFour").textContent = "";
+    });
+
+    // Logout
+    logoutBtn.addEventListener("click", () => {
+      playerName = "";
+      nameInput.value = "";
+      nameSection.classList.remove("hidden");
+      menuSection.classList.add("hidden");
+      document.getElementById("gameSectionSingle").classList.add("hidden");
+      document.getElementById("gameSectionFour").classList.add("hidden");
+      logoutBtn.classList.add("hidden");
+    });
   </script>
 </body>
 </html>
